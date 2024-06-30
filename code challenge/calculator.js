@@ -1,107 +1,99 @@
-// Function to calculate PAYE tax based on KRA rates
-function calculatePAYE(grossSalary) {
-    // Assume these tax brackets and rates based on the provided link (hypothetical example)
-    const taxBrackets = [
-        { min: 0, max: 24000, rate: 10 },
-        { min: 24001, max: 40000, rate: 15 },
-        { min: 40001, max: 60000, rate: 20 },
-        { min: 60001, max: Infinity, rate: 25 }
-    ];
+let baseSalary = function grossSalary(basic , benefits){
+    let grossSalary = parseInt(basic) + parseInt(benefits);
 
-    let taxPayable = 0;
-    let taxableIncome = grossSalary - 2400; // Assume basic relief of 2400
+return grossSalary;
+}
+let ksh = baseSalary(1000, 1000);
+function deductions(ksh){
 
-    for (let i = 0; i < taxBrackets.length; i++) {
-        if (taxableIncome <= 0) {
-            break;
-        }
-
-        let currentBracket = taxBrackets[i];
-        let taxableInThisBracket = Math.min(taxableIncome, currentBracket.max - currentBracket.min);
-        taxPayable += taxableInThisBracket * (currentBracket.rate / 100);
-        taxableIncome -= taxableInThisBracket;
+    function taxed(ksh){
+    let total ;
+    if(ksh < 24000){
+        total = ksh * 0.1;
+    }
+    else if(ksh <= 32333){
+        total = ksh * 0.25;
+    }
+    else if(ksh <= 500000){
+        total = (ksh * 0.3);
+    }
+    else if(ksh <= 800000){
+        total = (ksh * 0.325);
+    }
+    else {
+        total = (ksh * 0.35);
+    }
+    return total;
     }
 
-    return taxPayable;
-}
-
-// Function to calculate NHIF deduction (hypothetical values)
-function calculateNHIF(grossSalary) {
-    // Assume NHIF rates (hypothetical)
-    if (grossSalary < 6000) {
-        return 150;
-    } else if (grossSalary < 8000) {
-        return 300;
-    } else if (grossSalary < 12000) {
-        return 400;
-    } else if (grossSalary < 15000) {
-        return 500;
-    } else if (grossSalary < 20000) {
-        return 600;
-    } else if (grossSalary < 25000) {
-        return 750;
-    } else if (grossSalary < 30000) {
-        return 850;
-    } else if (grossSalary < 35000) {
-        return 900;
-    } else if (grossSalary < 40000) {
-        return 950;
-    } else if (grossSalary < 45000) {
-        return 1000;
-    } else if (grossSalary < 50000) {
-        return 1100;
-    } else if (grossSalary < 60000) {
-        return 1200;
-    } else if (grossSalary < 70000) {
-        return 1300;
-    } else if (grossSalary < 80000) {
-        return 1400;
-    } else if (grossSalary < 90000) {
-        return 1500;
-    } else if (grossSalary < 100000) {
-        return 1600;
-    } else {
-        return 1700;
+    function nhif(ksh){
+    let nhif = 0;
+    if(ksh <= 5999){
+        nhif = 150;
     }
-}
-
-// Function to calculate NSSF deduction (hypothetical values)
-function calculateNSSF(grossSalary) {
-    // Assume NSSF rates (hypothetical)
-    const nssfRateEmployee = 6; // percentage
-    const nssfRateEmployer = 6; // percentage
-
-    let nssfDeduction = grossSalary * (nssfRateEmployee / 100);
-    return nssfDeduction;
-}
-
-// Main function to calculate all values and net salary
-function calculateNetSalary(basicSalary, benefits) {
-    let grossSalary = basicSalary + benefits;
-    let payee = calculatePAYE(grossSalary);
-    let nhif = calculateNHIF(grossSalary);
-    let nssf = calculateNSSF(grossSalary);
-    let grossSalaryCalculated = grossSalary - payee - nhif - nssf;
+    else if(ksh <= 7999){
+        nhif = 300;
+    }
+    else if(ksh <= 11999){
+        nhif = 400;
+    }
+    else if(ksh <= 14999){
+        nhif = 500;
+    }
+    else if(ksh <= 19999){
+        nhif =  600;
+    }
+    else if(ksh <= 24999){
+        nhif =  750;
+    }
+    else if(ksh <= 29999){
+        nhif = ksh - 850;
+    }
+    else if(ksh <= 34999){
+        nhif =  900;
+    }
+    else if(ksh <= 39999){
+        nhif =  950;
+    }
+    else if(ksh <= 44999){
+        nhif = 1000;
+    }
+    else if(ksh <= 49999){
+        nhif =  1100;
+    }
+    else if(ksh <= 59999){
+        nhif =  1200;
+    }
+    else if(ksh <= 69999){
+        nhif = 1300;
+    }
+    else if(ksh <= 79999){
+        nhif =  1400;
+    }
+    else if(ksh <= 89999){
+        nhif = 1500;
+    }
+    else if(ksh <= 99999){
+        nhif = 1600;
+    }
+    else{
+        nhif = 1700;
+    }
+    return nhif;
+    }
     
-    // Assuming gross salary is sum of basic salary and benefits
-    let netSalary = grossSalaryCalculated;
-
-    return {
-        grossSalary: grossSalaryCalculated,
-        payee: payee,
-        nhif: nhif,
-        nssf: nssf,
-        netSalary: netSalary
-    };
+    function nssf(ksh){
+        let sub = ksh *0.06
+        return sub;
+    }
+    return Math.floor(taxed(ksh)) + Math.floor(nhif(ksh)) + Math.floor(nssf(ksh));
 }
 
-// Example usage:
-let basicSalary = 50000; // Example basic salary
-let benefits = 10000; // Example benefits
+function nSalary(ksh){
+    let net = ksh - deductions(ksh);
+    return net;
+}
 
-let salaryDetails = calculateNetSalary(basicSalary, benefits);
-console.log("Gross Salary:", salaryDetails.grossSalary);
-console.log("PAYE (Tax) Deduction:", salaryDetails.payee);
-console.log("NHIF Deduction:", salaryDetails.nhif);
-console.log("NSSF Deduction:", salaryDetails.nssf);
-console.log("Net Salary:", salaryDetails.netSalary);
+console.log(ksh)
+
+
